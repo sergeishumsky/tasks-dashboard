@@ -3,6 +3,16 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
 
+const path = require('path');
+const fs = require('fs');
+
+// App directory
+const appDirectory = fs.realpathSync(process.cwd());
+
+// Gets absolute path of file within app directory
+const resolveAppPath = relativePath => path.resolve(appDirectory, relativePath);
+
+
 module.exports = (env = {}) => {
 
   const { mode = 'development' } = env;
@@ -42,6 +52,7 @@ module.exports = (env = {}) => {
   };
 
   return {
+
     mode: isProd ? 'production': isDev && 'development',
 
     output: {
@@ -88,6 +99,7 @@ module.exports = (env = {}) => {
       // Loading CSS
       {
         test: /\.(css)$/,
+        include: resolveAppPath('src'),
         use: getStyleLoaders()
       },
 
@@ -99,7 +111,7 @@ module.exports = (env = {}) => {
 
     ]
     },
-
+    devtool: 'inline-source-map',
     plugins: getPlugins(),
 
     devServer: {
